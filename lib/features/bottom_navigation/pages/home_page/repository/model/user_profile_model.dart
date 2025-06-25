@@ -1,8 +1,8 @@
 class UserProfile {
   final int userId;
-  final String username;
+  late final String username;
   final String email;
-  final String cnicNumber;
+  late final String cnicNumber;
   String phoneNumber;
   final String role;
   final String photoUrl;

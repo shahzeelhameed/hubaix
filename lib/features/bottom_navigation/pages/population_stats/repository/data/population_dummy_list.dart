@@ -1,4 +1,3 @@
-// Population data
 import 'package:hubaix/features/bottom_navigation/pages/population_stats/repository/model/population_model.dart';
 
 final List<Population> populationList = [

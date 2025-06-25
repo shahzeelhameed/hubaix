@@ -42,9 +42,9 @@ class Validations {
     if (value.length < 8) {
       return 'Password must be at least 8 characters';
     }
-    if (!RegExp(r'^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z])').hasMatch(value)) {
-      return 'Password must contain uppercase, lowercase, and numbers';
-    }
+    // if (!RegExp(r'^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z])').hasMatch(value)) {
+    //   return 'Password must contain uppercase, lowercase, and numbers';
+    // }
     return null;
   }
 
