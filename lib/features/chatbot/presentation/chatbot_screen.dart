@@ -38,6 +38,7 @@ class _ChatBotState extends State<ChatBot> {
       _messages.add({'type': 'user', 'text': text});
       _isTyping = true;
     });
+
     await _chatBotService.saveMessage({'type': 'user', 'text': text});
     _messageController.clear();
     _scrollToBottom();
@@ -45,14 +46,17 @@ class _ChatBotState extends State<ChatBot> {
     // Simulate bot processing time
     await Future.delayed(const Duration(milliseconds: 500));
 
-    final response = _chatBotService.generateResponse(text);
+    final response = await _chatBotService.generateResponse(text); // <-- fixed
+
     setState(() {
       _messages.add({'type': 'bot', 'text': response});
       _isTyping = false;
     });
+
     await _chatBotService.saveMessage({'type': 'bot', 'text': response});
     _scrollToBottom();
   }
+
 
   void _scrollToBottom() {
     Future.delayed(const Duration(milliseconds: 100), () {

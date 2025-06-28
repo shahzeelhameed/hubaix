@@ -6,7 +6,7 @@ import 'package:hubaix/features/bottom_navigation/bottom_navigation.dart';
 import 'package:hubaix/main.dart';
 import 'package:hubaix/utils/styles.dart';
 import 'package:hubaix/utils/utils.dart';
-import 'package:hubaix/utils/validations.dart'; // Adjust path
+import 'package:hubaix/utils/validations.dart';
 
 class LoginModal extends StatefulWidget {
   const LoginModal({super.key});

@@ -5,15 +5,15 @@ List<Uc> ucList = [
     uc_name: "Uc - 01 Agra Taj Colony TMC Lyari",
     members: [
       UcMember(
-          member_name: "Shahzeel",
-          address: "Main Tariq Road",
-          phone_no: "03415701533",
+          member_name: "Nabi Bukhsh",
+          address: "Lyari-1",
+          phone_no: "03228265535",
           img_Url:
               "https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTA4L2pvYjEwMzQtZWxlbWVudC0wNi0zOTcucG5n.png"),
       UcMember(
           member_name: "Ali",
-          address: "PECHS",
-          phone_no: "03415701544",
+          address: "Lyari-2",
+          phone_no: "03228265535",
           img_Url:
               "https://toppng.com/uploads/preview/see-profile-gentlema-11563886739l6i9igwwuz.png")
     ],
@@ -22,15 +22,15 @@ List<Uc> ucList = [
     uc_name: "Uc - 02 Bihar Colony TMC Lyari",
     members: [
       UcMember(
-          member_name: "Nabi Baksh",
-          address: "Main Tariq Road",
-          phone_no: "0341-570333",
+          member_name: "Nabi Bukhsh",
+          address: "Lyari-3",
+          phone_no: "03228265535",
           img_Url:
               "https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTA4L2pvYjEwMzQtZWxlbWVudC0wNi0zOTcucG5n.png"),
       UcMember(
-          member_name: "Nabi Baksh",
-          address: "Main Tariq Road",
-          phone_no: "0341-570333",
+          member_name: "Ali",
+          address: "Lyari-4",
+          phone_no: "03228265535",
           img_Url:
               "https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTA4L2pvYjEwMzQtZWxlbWVudC0wNi0zOTcucG5n.png")
     ],

@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hubaix/config/components/populaton_info_title.dart';
-import 'package:hubaix/config/components/total_population_title.dart';
 import 'package:hubaix/features/bottom_navigation/pages/population_stats/presentation/widgets/population_data_list.dart';
-import 'package:hubaix/features/bottom_navigation/pages/population_stats/repository/data/population_dummy_list.dart';
-
-// Model class for UC data
 
 class PopulationDataPage extends StatelessWidget {
   const PopulationDataPage({super.key});
