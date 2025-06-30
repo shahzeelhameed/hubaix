@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:hubaix/constant/base_url.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:hubaix/features/bottom_navigation/pages/service_location/repository/model/service_location_model.dart';
 
-const String apiUrl = 'http://localhost:4000/api/location_services';
+const String apiUrl = '$baseUrl/api/location_services';
 
 Future<List<ServiceLocation>> fetchServiceLocations() async {
   final response = await http.get(Uri.parse(apiUrl));

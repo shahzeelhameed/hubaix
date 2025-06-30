@@ -134,7 +134,6 @@
 //   }
 // }
 
-
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:hubaix/features/bottom_navigation/pages/service_location/presentation/widgets/location_details_widget.dart';
@@ -202,23 +201,23 @@ class _ServiceLocationPageState extends State<ServiceLocationPage> {
   List<Marker> _getMarkers() {
     return _services
         .where((service) =>
-    _selectedCategory == 'All' || service.category == _selectedCategory)
+            _selectedCategory == 'All' || service.category == _selectedCategory)
         .map((service) => Marker(
-      point: service.location,
-      width: 40,
-      height: 40,
-      child: GestureDetector(
-        onTap: () => Utils.showBottomSheet(
-          context,
-          LocationDetailsWidget(service: service),
-        ),
-        child: Icon(
-          _getCategoryIcon(service.category),
-          color: Theme.of(context).primaryColor,
-          size: 40,
-        ),
-      ),
-    ))
+              point: service.location,
+              width: 40,
+              height: 40,
+              child: GestureDetector(
+                onTap: () => Utils.showBottomSheet(
+                  context,
+                  LocationDetailsWidget(service: service),
+                ),
+                child: Icon(
+                  _getCategoryIcon(service.category),
+                  color: Theme.of(context).primaryColor,
+                  size: 40,
+                ),
+              ),
+            ))
         .toList();
   }
 
@@ -226,7 +225,7 @@ class _ServiceLocationPageState extends State<ServiceLocationPage> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(title: Text('Lyari Town Services')),
+        appBar: AppBar(title: const Text('Lyari Town Services')),
         body: const Center(child: CircularProgressIndicator()),
       );
     }

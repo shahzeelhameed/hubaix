@@ -55,9 +55,21 @@ class _MyComplainsScreenState extends State<MyComplainsScreen> {
 
           return MyComplainsList(
             myComplaints: snapshot.data!,
-            onEdit: (id, description) {
-              print(
-                  'Edit complaint with ID: $id, new description: $description');
+            onEdit: (id, description) async {
+              final updateDESC =
+                  await ComplaintFetchService.updateComplaintDescription(
+                      id, description);
+              if (updateDESC) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Text('Complaint updated successfully')),
+                );
+                _refresh();
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Update failed')),
+                );
+              }
             },
             onDelete: (id) async {
               final deleted = await ComplaintFetchService.deleteComplaint(id);

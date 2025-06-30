@@ -30,4 +30,26 @@ class ComplaintFetchService {
 
     return response.statusCode == 200;
   }
+
+  static Future<bool> updateComplaintDescription(
+      int complaintId, String newDescription) async {
+    final url = Uri.parse('$baseUrl/complaints/$complaintId/description');
+
+    final response = await http.patch(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'description': newDescription,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      print('Failed to update: ${response.body}');
+      return false;
+    }
+  }
 }
