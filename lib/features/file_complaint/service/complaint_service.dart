@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:hubaix/constant/base_url.dart';
 
 class ComplaintService {
-  static const String baseUrl = 'http://localhost:4000';
-
   static Future<bool> submitComplaint({
     required int userId,
     required String description,
@@ -12,21 +11,31 @@ class ComplaintService {
     required String createdBy,
     required String email,
   }) async {
-    final url = Uri.parse('$baseUrl/complaints');
+    try {
+      final url = Uri.parse('$baseUrl/api/create-complaint');
 
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
+      final body = {
         'user_id': userId,
         'complaint_description': description,
         'cnic_number': cnic,
         'priority': priority.toLowerCase(),
         'created_by': createdBy,
         'author_email': email,
-      }),
-    );
+      };
 
-    return response.statusCode == 200 || response.statusCode == 201;
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(body),
+      );
+
+      print('Status: ${response.statusCode}');
+      print('Response: ${response.body}');
+
+      return response.statusCode == 200 || response.statusCode == 201;
+    } catch (e) {
+      print('Error submitting complaint: $e');
+      return false;
+    }
   }
 }

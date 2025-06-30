@@ -8,15 +8,15 @@ class ComplaintsListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       scrollDirection: Axis.horizontal,
-      itemCount: complaints.length,
+      itemCount: dummyComplaints.length,
       itemBuilder: (context, index) {
-        final complaint = complaints[index];
+        final complaint = dummyComplaints[index];
         return SizedBox(
           width: 400,
           child: Card(
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: ListTile(
-              title: Text(complaint.title),
+              title: Text(complaint.description),
               subtitle: Text(complaint.description),
               trailing: Chip(
                 label: Text(

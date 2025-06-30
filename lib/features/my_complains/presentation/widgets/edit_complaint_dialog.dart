@@ -24,7 +24,8 @@ class _EditComplaintDialogState extends State<EditComplaintDialog> {
   @override
   void initState() {
     super.initState();
-    _titleController = TextEditingController(text: widget.complaint.title);
+    _titleController =
+        TextEditingController(text: widget.complaint.description);
     _descriptionController =
         TextEditingController(text: widget.complaint.description);
   }
@@ -69,23 +70,7 @@ class _EditComplaintDialogState extends State<EditComplaintDialog> {
           child: const Text('Cancel'),
         ),
         TextButton(
-          onPressed: () {
-            myComplaints.remove(widget.complaint);
-            final updatedComplaint = Complaint(
-              title: _titleController.text,
-              description: _descriptionController.text,
-              status: widget.complaint.status,
-              dateSubmitted: widget.complaint.dateSubmitted,
-            );
-            myComplaints.add(updatedComplaint);
-
-            widget.onRefresh(true);
-
-            Navigator.pop(context);
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Complaint updated successfully')),
-            );
-          },
+          onPressed: () {},
           child: const Text('Save'),
         ),
       ],

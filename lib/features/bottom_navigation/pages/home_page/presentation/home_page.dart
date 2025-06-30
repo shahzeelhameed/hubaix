@@ -26,28 +26,30 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Column(
-        children: [
-          ProfileHeaderWidget(
-            onPressed: () {
-              Utils.showDialogBox(context, SearchDialogWidget(
-                onSearch: (text) {
-                  setState(() {
-                    searchText = text;
-                  });
-                },
-              ));
-            },
-          ),
-          const NavigationTabs(),
-          const SizedBox(
-              height: 100,
-              width: double.infinity,
-              child: ComplaintsListWidget()),
-          NewsList(
-            searchText: searchText,
-          ),
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            ProfileHeaderWidget(
+              onPressed: () {
+                Utils.showDialogBox(context, SearchDialogWidget(
+                  onSearch: (text) {
+                    setState(() {
+                      searchText = text;
+                    });
+                  },
+                ));
+              },
+            ),
+            const NavigationTabs(),
+            const SizedBox(
+                height: 100,
+                width: double.infinity,
+                child: ComplaintsListWidget()),
+            NewsList(
+              searchText: searchText,
+            ),
+          ],
+        ),
       ),
     );
   }

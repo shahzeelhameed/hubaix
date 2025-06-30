@@ -64,19 +64,18 @@ class _NewsState extends State<NewsList> {
 
             final articles = snapshot.data!;
 
-            return SizedBox(
-              height: MediaQuery.of(context).size.height * 0.4,
-              child: ListView.builder(
-                itemCount: articles.length,
-                itemBuilder: (context, index) {
-                  final article = articles[index];
-                  return NewsCard(
-                    article: article,
-                    newsService: newsService,
-                    onShare: () => Utils.shareArticle(article),
-                  );
-                },
-              ),
+            return ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: articles.length,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                final article = articles[index];
+                return NewsCard(
+                  article: article,
+                  newsService: newsService,
+                  onShare: () => Utils.shareArticle(article),
+                );
+              },
             );
           },
         ),

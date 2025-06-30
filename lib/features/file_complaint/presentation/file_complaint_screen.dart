@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:hubaix/features/my_complains/repository/data/complains_dummy_list.dart';
-import 'package:hubaix/utils/utils.dart';
-import 'package:image_picker/image_picker.dart';
-import '../../my_complains/repository/model/complaint.dart';
 import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:hubaix/features/file_complaint/service/complaint_service.dart';
+import 'package:hubaix/utils/utils.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../my_complains/presentation/my_complains_screen.dart';
 
 class ComplaintPage extends StatefulWidget {
@@ -17,9 +17,11 @@ class _ComplaintPageState extends State<ComplaintPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+
   String _selectedCategory = 'General';
   String _selectedPriority = 'Medium';
   List<File> _selectedImages = [];
+  bool _isLoading = false; // ← NEW
 
   final List<String> _categories = [
     'General',
@@ -58,207 +60,226 @@ class _ComplaintPageState extends State<ComplaintPage> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Please provide details about your complaint',
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 16,
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              DropdownButtonFormField<String>(
-                value: _selectedCategory,
-                decoration: const InputDecoration(
-                  labelText: 'Category',
-                  border: OutlineInputBorder(),
-                ),
-                items: _categories.map((String category) {
-                  return DropdownMenuItem(
-                    value: category,
-                    child: Text(category),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  if (newValue != null) {
-                    setState(() {
-                      _selectedCategory = newValue;
-                    });
-                  }
-                },
-              ),
-              const SizedBox(height: 16),
-
-              DropdownButtonFormField<String>(
-                value: _selectedPriority,
-                decoration: const InputDecoration(
-                  labelText: 'Priority',
-                  border: OutlineInputBorder(),
-                ),
-                items: _priorities.map((String priority) {
-                  return DropdownMenuItem(
-                    value: priority,
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 12,
-                          height: 12,
-                          decoration: BoxDecoration(
-                            color: _getPriorityColor(priority),
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(priority),
-                      ],
+      body: Stack(
+        children: [
+          AbsorbPointer(
+            absorbing: _isLoading,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Please provide details about your complaint',
+                      style: TextStyle(color: Colors.grey, fontSize: 16),
                     ),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  if (newValue != null) {
-                    setState(() {
-                      _selectedPriority = newValue;
-                    });
-                  }
-                },
-              ),
-              const SizedBox(height: 16),
-
-              TextFormField(
-                controller: _titleController,
-                decoration: const InputDecoration(
-                  labelText: 'Title',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a title';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-
-              TextFormField(
-                controller: _descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Description',
-                  border: OutlineInputBorder(),
-                  alignLabelWithHint: true,
-                ),
-                maxLines: 5,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a description';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-
-              ElevatedButton.icon(
-                onPressed: _pickImages,
-                icon: const Icon(Icons.photo_library),
-                label: const Text('Select Photos'),
-              ),
-              const SizedBox(height: 10),
-
-              // Display selected images
-              _selectedImages.isNotEmpty
-                  ? Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: _selectedImages.map((file) {
-                        return Stack(
-                          alignment: Alignment.topRight,
-                          children: [
-                            Image.file(
-                              file,
-                              width: 100,
-                              height: 100,
-                              fit: BoxFit.cover,
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.cancel, color: Colors.red),
-                              onPressed: () {
-                                setState(() {
-                                  _selectedImages.remove(file);
-                                });
-                              },
-                            ),
-                          ],
+                    const SizedBox(height: 24),
+                    DropdownButtonFormField<String>(
+                      value: _selectedCategory,
+                      decoration: const InputDecoration(
+                        labelText: 'Category',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: _categories.map((String category) {
+                        return DropdownMenuItem(
+                          value: category,
+                          child: Text(category),
                         );
                       }).toList(),
-                    )
-                  : const Text('No images selected'),
-
-              const SizedBox(height: 24),
-
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: _submitComplaint,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).primaryColor,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      onChanged: (newValue) {
+                        if (newValue != null) {
+                          setState(() {
+                            _selectedCategory = newValue;
+                          });
+                        }
+                      },
                     ),
-                  ),
-                  child: const Text(
-                    'Submit Complaint',
-                    style: TextStyle(fontSize: 16),
-                  ),
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<String>(
+                      value: _selectedPriority,
+                      decoration: const InputDecoration(
+                        labelText: 'Priority',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: _priorities.map((String priority) {
+                        return DropdownMenuItem(
+                          value: priority,
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 12,
+                                height: 12,
+                                decoration: BoxDecoration(
+                                  color: _getPriorityColor(priority),
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(priority),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) {
+                        if (newValue != null) {
+                          setState(() {
+                            _selectedPriority = newValue;
+                          });
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _titleController,
+                      decoration: const InputDecoration(
+                        labelText: 'Title',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) => value == null || value.isEmpty
+                          ? 'Enter a title'
+                          : null,
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _descriptionController,
+                      decoration: const InputDecoration(
+                        labelText: 'Description',
+                        border: OutlineInputBorder(),
+                        alignLabelWithHint: true,
+                      ),
+                      maxLines: 5,
+                      validator: (value) => value == null || value.isEmpty
+                          ? 'Enter a description'
+                          : null,
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton.icon(
+                      onPressed: _pickImages,
+                      icon: const Icon(Icons.photo_library),
+                      label: const Text('Select Photos'),
+                    ),
+                    const SizedBox(height: 10),
+                    _selectedImages.isNotEmpty
+                        ? Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: _selectedImages.map((file) {
+                              return Stack(
+                                alignment: Alignment.topRight,
+                                children: [
+                                  Image.file(
+                                    file,
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.cover,
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.cancel,
+                                        color: Colors.red),
+                                    onPressed: () {
+                                      setState(() {
+                                        _selectedImages.remove(file);
+                                      });
+                                    },
+                                  ),
+                                ],
+                              );
+                            }).toList(),
+                          )
+                        : const Text('No images selected'),
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: _submitComplaint,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(context).primaryColor,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: _isLoading
+                            ? const SizedBox(
+                                height: 24,
+                                width: 24,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Text(
+                                'Submit Complaint',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
+            ),
           ),
-        ),
+          if (_isLoading)
+            Container(
+              color: Colors.black.withOpacity(0.3),
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+        ],
       ),
     );
   }
 
   Future<void> _pickImages() async {
-    final ImagePicker picker = ImagePicker();
+    final picker = ImagePicker();
     final List<XFile> images = await picker.pickMultiImage();
-
     setState(() {
-      _selectedImages = images.map((image) => File(image.path)).toList();
+      _selectedImages = images.map((img) => File(img.path)).toList();
     });
   }
 
-  void _submitComplaint() {
+  Future<void> _submitComplaint() async {
     if (_formKey.currentState!.validate()) {
-      final newComplaint = Complaint(
-        title: _titleController.text,
+      setState(() => _isLoading = true);
+      final prefs = await SharedPreferences.getInstance();
+
+      final userId = prefs.getInt('user_id') ?? 0;
+      final email = prefs.getString('email') ?? '';
+      final cnic = prefs.getString('cnic') ?? '';
+      final username = prefs.getString('username') ?? '';
+
+      final success = await ComplaintService.submitComplaint(
+        userId: userId,
         description: _descriptionController.text,
-        status: 'Pending',
-        dateSubmitted: DateTime.now(),
+        cnic: cnic,
+        priority: _selectedPriority,
+        createdBy: username,
+        email: email,
       );
 
-      myComplaints.add(newComplaint);
+      setState(() => _isLoading = false);
 
-      Utils.showSnackBar(context, 'Complaint submitted successfully',
-          bgcolor: Colors.green);
+      if (success) {
+        Utils.showSnackBar(context, 'Complaint submitted successfully',
+            bgcolor: Colors.green);
 
-      _titleController.clear();
-      _descriptionController.clear();
-      setState(() {
-        _selectedCategory = 'General';
-        _selectedPriority = 'Medium';
-        _selectedImages.clear();
-      });
+        _titleController.clear();
+        _descriptionController.clear();
+        setState(() {
+          _selectedCategory = 'General';
+          _selectedPriority = 'Medium';
+          _selectedImages.clear();
+        });
 
-      Navigator.pop(context,
-          true); // Close the complaint page and return to the previous screen
+        Navigator.pop(context, true);
+      } else {
+        Utils.showSnackBar(context, 'Failed to submit complaint',
+            bgcolor: Colors.red);
+      }
     }
   }
 
@@ -277,5 +298,3 @@ class _ComplaintPageState extends State<ComplaintPage> {
     }
   }
 }
-
-

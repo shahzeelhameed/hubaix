@@ -1,31 +1,34 @@
 class Complaint {
-  final String title;
+  final int id;
+  final String createdBy;
+  final int userId;
   final String description;
+  final String cnic;
   final String status;
-  final DateTime dateSubmitted;
-  final String? imagePath;
+  final String priority;
+  final DateTime createdAt;
 
   Complaint({
-    required this.title,
+    required this.id,
+    required this.createdBy,
+    required this.userId,
     required this.description,
+    required this.cnic,
     required this.status,
-    required this.dateSubmitted,
-    this.imagePath,
+    required this.priority,
+    required this.createdAt,
   });
 
-  Complaint copyWith({
-    String? title,
-    String? description,
-    String? status,
-    DateTime? dateSubmitted,
-    String? imagePath,
-  }) {
+  factory Complaint.fromJson(Map<String, dynamic> json) {
     return Complaint(
-      title: title ?? this.title,
-      description: description ?? this.description,
-      status: status ?? this.status,
-      dateSubmitted: dateSubmitted ?? this.dateSubmitted,
-      imagePath: imagePath ?? this.imagePath,
+      id: json['complaint_id'],
+      createdBy: json['created_by'],
+      userId: json['user_id'],
+      description: json['complaint_description'],
+      cnic: json['cnic_number'],
+      status: json['status'],
+      priority: json['priority'],
+      createdAt: DateTime.parse(json['created_at']),
     );
   }
 }

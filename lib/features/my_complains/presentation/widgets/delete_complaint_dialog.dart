@@ -27,16 +27,7 @@ class _DeleteComplaintDialogState extends State<DeleteComplaintDialog> {
           child: const Text('Cancel'),
         ),
         TextButton(
-          onPressed: () {
-            myComplaints.removeAt(widget.index);
-
-            widget.onRefresh(true);
-
-            Navigator.pop(context);
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Complaint deleted successfully')),
-            );
-          },
+          onPressed: () {},
           child: const Text('Delete', style: TextStyle(color: Colors.red)),
         ),
       ],

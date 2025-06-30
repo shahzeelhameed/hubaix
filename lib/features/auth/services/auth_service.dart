@@ -1,12 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:hubaix/constant/base_url.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../bottom_navigation/pages/home_page/repository/model/user_profile_model.dart';
 
 class AuthenticationService {
-  final String baseUrl = 'http://localhost:4000';
-
   Future<bool> signUp({
     required String username,
     required String email,
@@ -49,7 +48,7 @@ class AuthenticationService {
     required String password,
   }) async {
     try {
-      final url = Uri.parse('http://localhost:4000/login');
+      final url = Uri.parse('$baseUrl/login');
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -93,6 +92,7 @@ class AuthenticationService {
     required String phone,
     required String role,
   }) async {
+    print(userId);
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('token', token);
     await prefs.setInt('user_id', userId);
@@ -111,7 +111,7 @@ class AuthenticationService {
   }
 
   Future<bool> updateUserProfile(UserProfile userProfile) async {
-    final url = Uri.parse('http://localhost:4000/users/${userProfile.userId}');
+    final url = Uri.parse('$baseUrl/users/${userProfile.userId}');
     final response = await http.put(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -126,7 +126,7 @@ class AuthenticationService {
   }
 
   Future<UserProfile?> getCurrentUser(int userId) async {
-    final url = Uri.parse('http://localhost:4000/users/$userId');
+    final url = Uri.parse('$baseUrl/users/$userId');
     final response = await http.get(
       url,
       headers: {'Content-Type': 'application/json'},
